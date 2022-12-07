@@ -5,17 +5,27 @@ module Dependency
   class GraphGenerator 
     def dependency_spces(spec) 
       dependencies = []
-      spec.dependencies.each { | dependency |
-        d_spec = @module_spec_hash[dependency.name]
-        next unless d_spec.source
-        dependencies << d_spec 
-      }
+
+      if spec.respond_to?(:subspecs)
+        spec.subspecs.each { | subspec |
+          d_spec = @module_spec_hash[subspec.name]
+          dependencies << d_spec 
+        }
+      end
+
+      if spec.respond_to?(:dependencies)
+        spec.dependencies.each { | dependency |
+          d_spec = @module_spec_hash[dependency.name]
+          puts d_spec
+          dependencies << d_spec 
+        }
+      end
+
       dependencies
     end
 
     def dfs_graph(parent, specs) 
       specs.each { | spec |
-        next unless spec.source
         @graph.add_edge(parent, spec)
         dfs_graph(spec, dependency_spces(spec))
       }
