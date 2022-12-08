@@ -8,8 +8,10 @@ module Dependency
 
       if spec.respond_to?(:subspecs)
         spec.subspecs.each { | subspec |
-          d_spec = @module_spec_hash[subspec.name]
-          dependencies << d_spec 
+          subspec.dependencies.each { | dependency |
+            d_spec = @module_spec_hash[dependency.name]
+            dependencies << d_spec   
+          }
         }
       end
 
